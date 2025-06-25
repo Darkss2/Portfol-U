@@ -21,27 +21,35 @@ font-style: normal;
 <div class="bubble-background">
 </div>
 <header>
-<div class="logo">Portfolio</div>
-<nav>
-<ul>
-<li><a href="#home" class="active">Home</a></li>
-<li><a href="#portfolio">Portfolio</a></li>
-<li><a href="#pricing">Prices</a></li>
-<li><a href="#contact">Contact</a></li>
-</ul>
-</nav>
-<div class="theme-switcher">
-<div class="theme-button">
-<span class="theme-icon sun">
-<img src="sun.svg" alt="Sun" loading="lazy">
-</span>
-</div>
-<div class="theme-button">
-<span class="theme-icon moon">
-<img src="moon.svg" alt="Moon" loading="lazy">
-</span>
-</div>
-</div>
+    <div class="logo">Portfolio</div>
+    <nav class="main-nav">
+        <ul>
+            <li><a href="#home" class="active">Home</a></li>
+            <li><a href="#portfolio">Portfolio</a></li>
+            <li><a href="#pricing">Prices</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    <div class="header-right">
+        <div class="theme-switcher">
+            <div class="theme-button">
+                <span class="theme-icon sun">
+                    <img src="sun.svg" alt="Sun" loading="lazy">
+                </span>
+            </div>
+            <div class="theme-button">
+                <span class="theme-icon moon">
+                    <img src="moon.svg" alt="Moon" loading="lazy">
+                </span>
+            </div>
+        </div>
+        <!-- HAMBURGER MENU BUTTON -->
+        <button id="hamburger-menu" aria-label="Open navigation menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
 </header>
 <section id="home">
     <div class="hero-content">
@@ -667,7 +675,7 @@ font-style: normal;
                 <div class="arrow left-arrow"><span>➜</span></div>
                 <div class="arrow right-arrow"><span>➜</span></div>
                 <div class="video-slider mixed">
-                     <div class="video-wrapper vertical"><div class="video-container"><img src="9_16_3.webp" alt="Video Thumbnail: kaaba STC" class="video-thumbnail" data-video-url="https://drive.google.com/file/d/1JjWgRSiJR09_EtIC3W6AowAypfNyuAsy/preview" aria-label="Click to play Video: kaaba STC" role="button" tabindex.0"><iframe src="" allow="autoplay" class="video-iframe">Loading...</iframe></div></div>
+                     <div class="video-wrapper vertical"><div class="video-container"><img src="9_16_3.webp" alt="Video Thumbnail: kaaba STC" class="video-thumbnail" data-video-url="https://drive.google.com/file/d/1JjWgRSiJR09_EtIC3W6AowAypfNyuAsy/preview" aria-label="Click to play Video: kaaba STC" role="button" tabindex="0"><iframe src="" allow="autoplay" class="video-iframe">Loading...</iframe></div></div>
                     <div class="video-wrapper square"><div class="video-container"><img src="1_1_1.webp" alt="Video Thumbnail: better homes dz version 2" class="video-thumbnail" data-video-url="https://drive.google.com/file/d/17sCgihzmx3sOPKtCyyNRv-SE3LOozAcG/preview" aria-label="Click to play Video: better homes dz version 2" role="button" tabindex="0"><iframe src="" allow="autoplay" class="video-iframe">Loading...</iframe></div></div>
                 </div>
             </div>
@@ -724,9 +732,16 @@ font-style: normal;
     </div>
     <div class="copy-message" id="copyMessage">Copied!</div>
 </section>
-    <a href="https://wa.me/21305633460" target="_blank" class="whatsapp-button">
+    <a href="https://wa.me/2130562633460" target="_blank" class="whatsapp-button">
     <img src="whatsapp.svg" alt="WhatsApp" loading="lazy">
 </a>
+
+<!-- VIDEO LIGHTBOX FOR MOBILE -->
+<div id="video-lightbox" class="video-lightbox">
+    <div class="lightbox-content">
+        <iframe src="" allow="autoplay; fullscreen" allowfullscreen frameborder="0"></iframe>
+    </div>
+</div>
 
 <script src="script.js"></script>
 </body>
