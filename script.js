@@ -1,12 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Cache DOM elements
+    const body = document.body;
     const themeSwitcher = document.querySelector('.theme-switcher');
     const sections = document.querySelectorAll('section');
-    const navLinks = document.querySelectorAll('nav a');
+    const navLinks = document.querySelectorAll('.main-nav a');
     const copyMessage = document.getElementById('copyMessage');
-    const body = document.body;
     const statNumbers = document.querySelectorAll('.stat-number');
     const skillTicker = document.querySelector('.skill-ticker');
+    const hamburgerBtn = document.getElementById('hamburger-menu');
+    const mainNav = document.querySelector('.main-nav');
+    const lightbox = document.getElementById('video-lightbox');
+    const lightboxContent = lightbox.querySelector('.lightbox-content');
+    const lightboxIframe = lightbox.querySelector('iframe');
+
+
+    // --- Mobile Navigation ---
+    if (hamburgerBtn && mainNav) {
+        hamburgerBtn.addEventListener('click', () => {
+            body.classList.toggle('nav-open');
+            mainNav.classList.toggle('is-open');
+        });
+
+        // Close menu when a link is clicked
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (body.classList.contains('nav-open')) {
+                    body.classList.remove('nav-open');
+                    mainNav.classList.remove('is-open');
+                }
+            });
+        });
+    }
 
     // --- Theme Switcher ---
     themeSwitcher.addEventListener('click', () => {
@@ -84,7 +108,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!slider || !leftArrow || !rightArrow) return;
         
-        // Use the first video wrapper to determine a good scroll amount
         const firstVideo = slider.querySelector('.video-wrapper');
         const scrollAmount = firstVideo ? firstVideo.offsetWidth * 1.5 : slider.clientWidth * 0.8;
 
@@ -97,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const updateArrowState = () => {
-            // A small tolerance to account for subpixel rendering
             const isAtEnd = (slider.scrollLeft + slider.clientWidth) >= (slider.scrollWidth - 5);
             
             leftArrow.style.opacity = slider.scrollLeft > 1 ? '1' : '0.3';
@@ -105,21 +127,17 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         slider.addEventListener('scroll', debounce(updateArrowState, 50), { passive: true });
-        // Use a slight delay on load to ensure scrollWidth is calculated correctly
         setTimeout(updateArrowState, 100);
         window.addEventListener('resize', debounce(updateArrowState, 200));
     });
 
-    // --- Copy contact info to clipboard (IMPROVED) ---
+    // --- Copy contact info to clipboard ---
     document.querySelectorAll('.contact-item[data-copy]').forEach(item => {
         item.addEventListener('click', (e) => {
-            // Check if the item is a link. If it is, let the link do its job.
-            // We only prevent default for clipboard copy on non-links.
             if (item.tagName.toLowerCase() === 'a' && (item.href.startsWith('mailto:') || item.href.startsWith('tel:'))) {
-                 // The link will work, but we can still copy
                  console.log("Link clicked, but also copying to clipboard.");
             } else {
-                 e.preventDefault(); // Prevent default only if it's not a primary link
+                 e.preventDefault();
             }
 
             const text = item.getAttribute('data-copy');
@@ -146,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const stat = entry.target;
                     const target = parseInt(stat.dataset.target);
                     let current = 0;
-                    const duration = 2000; // 2 seconds total
+                    const duration = 2000;
                     const stepTime = 10;
                     const totalSteps = duration / stepTime;
                     const increment = target / totalSteps;
@@ -161,62 +179,98 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }, stepTime);
 
-                    observer.unobserve(stat); // Animate only once
+                    observer.unobserve(stat);
                 }
             });
-        }, { threshold: 0.5 }); // Start when 50% of the element is visible
+        }, { threshold: 0.5 });
 
         statNumbers.forEach(stat => {
             observer.observe(stat);
         });
     };
 
-    // --- Thumbnail Click to Play Video (Applied to all thumbnails on page) ---
+    // --- Thumbnail Click to Play Video (Desktop) & Open Lightbox (Mobile) ---
     const initializeVideoPlayback = () => {
         document.querySelectorAll('.video-thumbnail').forEach(thumbnail => {
-             // Use a unique identifier to avoid re-attaching listeners
             if (thumbnail.dataset.listenerAttached) return;
             thumbnail.dataset.listenerAttached = 'true';
 
-            const playVideo = (event) => {
-                const videoUrl = thumbnail.getAttribute('data-video-url');
-                const videoContainer = thumbnail.closest('.video-container');
-                if (!videoContainer) return;
-                const iframe = videoContainer.querySelector('.video-iframe');
-                if (!iframe) return;
+            const videoUrl = thumbnail.getAttribute('data-video-url');
+            const thumbnailUrl = thumbnail.getAttribute('src');
 
-                // Stop any other videos that might be playing in the same slider
-                const parentSlider = thumbnail.closest('.video-slider');
-                if (parentSlider) {
-                    parentSlider.querySelectorAll('.video-container.playing').forEach(playingContainer => {
-                        if (playingContainer !== videoContainer) {
-                            playingContainer.querySelector('.video-iframe').src = '';
-                            playingContainer.classList.remove('playing');
-                        }
-                    });
+            const handleClick = (event) => {
+                event.preventDefault();
+
+                // --- Mobile Logic: Open Lightbox (screen width <= 768px) ---
+                if (window.innerWidth <= 768) {
+                    // Determine aspect ratio from thumbnail's image source
+                    let aspect = '16/9'; // Default to horizontal
+                    if (thumbnailUrl && thumbnailUrl.includes('9_16')) {
+                        aspect = '9/16';
+                    } else if (thumbnailUrl && thumbnailUrl.includes('1_1')) {
+                        aspect = '1/1';
+                    }
+
+                    // Apply styles to lightbox for correct aspect ratio
+                    lightboxContent.style.aspectRatio = aspect;
+                    if (aspect === '9/16') {
+                        lightboxContent.style.width = 'auto';
+                        lightboxContent.style.height = '90vh';
+                    } else {
+                        lightboxContent.style.width = '90vw';
+                        lightboxContent.style.height = 'auto';
+                    }
+
+                    // Show lightbox
+                    lightboxIframe.src = videoUrl + "?autoplay=1";
+                    lightbox.classList.add('show');
+                    body.classList.add('lightbox-open');
+
+                // --- Desktop Logic: Play Inline ---
+                } else {
+                    const videoContainer = thumbnail.closest('.video-container');
+                    if (!videoContainer) return;
+                    const iframe = videoContainer.querySelector('.video-iframe');
+                    if (!iframe) return;
+
+                    // Stop any other playing video in the same slider
+                    const parentSlider = thumbnail.closest('.video-slider');
+                    if (parentSlider) {
+                        parentSlider.querySelectorAll('.video-container.playing').forEach(playingContainer => {
+                            if (playingContainer !== videoContainer) {
+                                playingContainer.querySelector('.video-iframe').src = '';
+                                playingContainer.classList.remove('playing');
+                            }
+                        });
+                    }
+
+                    iframe.src = videoUrl + "?autoplay=1";
+                    videoContainer.classList.add('playing');
                 }
-
-                iframe.src = videoUrl + "?autoplay=1"; // Add autoplay parameter
-                videoContainer.classList.add('playing');
-            };
-
-            const handleClick = (e) => {
-                e.preventDefault();
-                playVideo(e);
             };
 
             const handleKeydown = (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    playVideo(e);
+                    handleClick(e);
                 }
             };
-            
+
             thumbnail.addEventListener('click', handleClick);
             thumbnail.addEventListener('keydown', handleKeydown);
         });
     };
 
+    // --- Lightbox Close Functionality ---
+    const initializeLightboxClosing = () => {
+        lightbox.addEventListener('click', (e) => {
+            // Only close if the click is on the dark background, not the video itself
+            if (e.target === lightbox) {
+                lightboxIframe.src = ''; // Important: stop video playback
+                lightbox.classList.remove('show');
+                body.classList.remove('lightbox-open');
+            }
+        });
+    };
 
     // --- Skill Ticker Pause on Hover ---
     if (skillTicker && window.matchMedia('(hover: hover)').matches) {
@@ -231,5 +285,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initial function calls ---
     startStatCounters();
     initializeVideoPlayback();
-    updateNavAndSections(); // Call on load to set initial state
+    initializeLightboxClosing();
+    updateNavAndSections();
 });
