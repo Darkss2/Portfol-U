@@ -9,10 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const skillTicker = document.querySelector('.skill-ticker');
     const hamburgerBtn = document.getElementById('hamburger-menu');
     const mainNav = document.querySelector('.main-nav');
-    const lightbox = document.getElementById('video-lightbox');
-    const lightboxContent = lightbox.querySelector('.lightbox-content');
-    const lightboxIframe = lightbox.querySelector('iframe');
-
 
     // --- Mobile Navigation ---
     if (hamburgerBtn && mainNav) {
@@ -189,42 +185,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // --- Thumbnail Click to Play Video (Desktop) & Open Lightbox (Mobile) ---
+    // --- Thumbnail Click to Play Video (Desktop) or Open Link (Mobile) ---
     const initializeVideoPlayback = () => {
         document.querySelectorAll('.video-thumbnail').forEach(thumbnail => {
             if (thumbnail.dataset.listenerAttached) return;
             thumbnail.dataset.listenerAttached = 'true';
 
             const videoUrl = thumbnail.getAttribute('data-video-url');
-            const thumbnailUrl = thumbnail.getAttribute('src');
-
+            
             const handleClick = (event) => {
                 event.preventDefault();
 
-                // --- Mobile Logic: Open Lightbox (screen width <= 768px) ---
+                // --- Mobile Logic: Open link in new tab (screen width <= 768px) ---
                 if (window.innerWidth <= 768) {
-                    // Determine aspect ratio from thumbnail's image source
-                    let aspect = '16/9'; // Default to horizontal
-                    if (thumbnailUrl && thumbnailUrl.includes('9_16')) {
-                        aspect = '9/16';
-                    } else if (thumbnailUrl && thumbnailUrl.includes('1_1')) {
-                        aspect = '1/1';
-                    }
-
-                    // Apply styles to lightbox for correct aspect ratio
-                    lightboxContent.style.aspectRatio = aspect;
-                    if (aspect === '9/16') {
-                        lightboxContent.style.width = 'auto';
-                        lightboxContent.style.height = '90vh';
-                    } else {
-                        lightboxContent.style.width = '90vw';
-                        lightboxContent.style.height = 'auto';
-                    }
-
-                    // Show lightbox
-                    lightboxIframe.src = videoUrl + "?autoplay=1";
-                    lightbox.classList.add('show');
-                    body.classList.add('lightbox-open');
+                    window.open(videoUrl, '_blank');
 
                 // --- Desktop Logic: Play Inline ---
                 } else {
@@ -260,18 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // --- Lightbox Close Functionality ---
-    const initializeLightboxClosing = () => {
-        lightbox.addEventListener('click', (e) => {
-            // Only close if the click is on the dark background, not the video itself
-            if (e.target === lightbox) {
-                lightboxIframe.src = ''; // Important: stop video playback
-                lightbox.classList.remove('show');
-                body.classList.remove('lightbox-open');
-            }
-        });
-    };
-
     // --- Skill Ticker Pause on Hover ---
     if (skillTicker && window.matchMedia('(hover: hover)').matches) {
         skillTicker.addEventListener('mouseover', () => {
@@ -285,6 +247,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initial function calls ---
     startStatCounters();
     initializeVideoPlayback();
-    initializeLightboxClosing();
     updateNavAndSections();
 });
