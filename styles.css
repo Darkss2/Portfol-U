@@ -47,8 +47,8 @@ body {
     transition: background 0.3s, color 0.3s;
 }
 
-/* Stop scrolling when mobile menu or lightbox is open */
-body.nav-open, body.lightbox-open {
+/* Stop scrolling when mobile menu is open */
+body.nav-open {
     overflow: hidden;
 }
 
@@ -387,7 +387,7 @@ html { scroll-behavior: smooth; }
 
 
 /* ==========================================================================
-   MOBILE NAVIGATION, RESPONSIVE STYLES, AND LIGHTBOX
+   MOBILE NAVIGATION AND RESPONSIVE STYLES
    ========================================================================== */
 
 /* --- HAMBURGER MENU BUTTON STYLING (Hidden on Desktop) --- */
@@ -420,50 +420,6 @@ html { scroll-behavior: smooth; }
 .nav-open #hamburger-menu span:nth-child(1) { top: 11px; transform: rotate(45deg); }
 .nav-open #hamburger-menu span:nth-child(2) { opacity: 0; transform: translateX(-100%); }
 .nav-open #hamburger-menu span:nth-child(3) { top: 11px; transform: rotate(-45deg); }
-
-
-/* --- VIDEO LIGHTBOX STYLES --- */
-.video-lightbox {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s, visibility 0.3s;
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
-}
-.video-lightbox.show {
-    opacity: 1;
-    visibility: visible;
-}
-.lightbox-content {
-    max-width: 95vw;
-    max-height: 95vh;
-    transform: scale(0.8);
-    transition: transform 0.3s;
-    background: black;
-    border-radius: 10px;
-    overflow: hidden;
-    /* JS will set specific width/height/aspect-ratio */
-}
-.video-lightbox.show .lightbox-content {
-    transform: scale(1);
-}
-.lightbox-content iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-}
-
 
 /* Media Queries for Responsiveness */
 @media (max-width: 900px) { /* Use a wider breakpoint for nav switch */
@@ -516,15 +472,6 @@ html { scroll-behavior: smooth; }
     .skill-text-container { width: 160px; padding: 0 15px; }
     .skill-text-container span { font-size: 0.9rem; }
     @keyframes slide { 0% { transform: translateX(0); } 100% { transform: translateX(calc(-6 * (220px + 30px) * 3)); } }
-
-    /* On mobile, disable the inline video player. The lightbox will be used instead. */
-    .video-container .video-iframe {
-        display: none;
-    }
-    /* Hide the .playing state visuals for desktop, as they are not needed on mobile */
-    .video-container.playing .video-thumbnail {
-        opacity: 1; /* Keep thumbnail visible */
-    }
 
     /* Sliders */
     .video-slider {
